@@ -1,0 +1,202 @@
+
+
+1) environment   ++++++++++++++++++++++++++++++++++++++++++++++++
+
+you need to make the terminal window know where your ros packages are
+
+  a) the main ros packages
+
+	source /opt/ros/noetic/setup.bash  ### add this to .bashrc for automatic run
+  
+  b) your own packages (source it after each compile to let the terminal know of any update)
+
+       source devel/setup.bash 		### run this from your own catkin workspace 
+	
+2) create a package ++++++++++++++++++++++++++++++++++++++++++++++++
+
+ 
+	a) catkin_create_pkg <package_name> [depend1] [depend2] [depend3] ## run from src folder in catkin workspace
+	  ## the above command will create package.xml and cmakelist  <---- EDIT THEM!!!!!(all dependencies & final executable) accordingly
+
+	b) put your codes in src FOLDER of the PACKAGE!!!
+
+	c) catkin_make   ### run this from your catkin workspace <---NOTE THIS DIRECTORY
+	
+++++++++++++++++++++++++++++++++++++++++++++++++TIP++++++++++++++++++++++++++++++++++++++++++++++++
+use commnads like roscd,rosls to navigate between packages
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ROS Graph Concepts:http://wiki.ros.org/ROS/Concepts
+
+3) ROS NODE CONCEPT ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	A node is a process that performs computation.Nodes are combined together into a graph and communicate with one another using streaming topics, 
+	RPC services, and the Parameter Server. 
+
+---------------------------------------------------------------------------------------------------------------------
+			rosnode info    print information about node
+			rosnode kill    kill a running node
+			rosnode list    list active nodes
+			rosnode machine list nodes running on a particular machine or list machines
+			rosnode ping    test connectivity to node
+			rosnode cleanup purge registration information of unreachable nodes
+			http://wiki.ros.org/rosnode
+---------------------------------------------------------------------------------------------------------------------
+
+4) NODES PUBLISH messages ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	A message is a simple data structure, comprising typed fields. Standard primitive types (integer, floating point, boolean, etc.) are supported, 
+	as are arrays of primitive types.Messages can include arbitrarily nested structures and arrays (much like C structs).
+	Message types use standard ROS naming conventions: the name of the package + / + name of the .msg file
+
+	a) msg file
+		msg files are simple text files for specifying the data structure of a message. 
+		These files are stored in the msg subdirectory of a package.
+		see: http://wiki.ros.org/msg for more info (heaader +consatnt concept)
+		There are two parts to a .msg file: fields and constants.
+		Fields are the data that is sent inside of the message. Constants define useful values that can be used to interpret those fields 
+	
+	eg  my_package/msg/testmsg.msg
+		int32 x
+		int32 y
+		
+
+
+	b) Build message --> ros automaticaly does this using message_generation   bt need to specify it on build process
+
+		Open package.xml, and make sure these two lines are in it:
+
+		<build_depend>message_generation</build_depend>
+  		<run_depend>message_runtime</run_depend>
+		
+
+		Add the message_generation dependency to the find package call which already exists in your CMakeLists.txt so that you can generate messages. 
+		You can do this by simply adding message_generation to the list of COMPONENTS such that it looks like this:
+		
+
+		# Do not just add this line to your CMakeLists.txt, modify the existing line
+		find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs message_generation)
+		
+		#Also make sure you export the message runtime dependency.
+		  catkin_package(
+		  ...
+		  CATKIN_DEPENDS message_runtime ...
+		  ...)
+
+
+		#Find the following block of code:
+		# add_message_files(
+		#   FILES
+		#   Message1.msg
+		#   Message2.msg
+		# )
+		# Uncomment it by removing the # symbols and then replace the stand in Message*.msg files with your .msg file, such that it looks like this:
+
+		add_message_files(
+		  FILES
+		  Num.msg
+		)
+
+
+		Find the following block of code:
+
+		# generate_messages(
+		#    DEPENDENCIES
+		#    std_msgs  # Or other packages containing msgs
+		# )
+		#Uncomment it by removing the # symbols and then replace std_msgs with the messages your messages depend on, such that it looks like this:
+
+
+		 generate_messages(
+		   DEPENDENCIES
+		   std_msgs
+		)
+
+		++++++++++++++++++++++TLDR
+		1. specify on package.xml about runtime and building dependency
+		2. on CMakeLists.txt specify to use message_generation module
+		3. on CMakeLists.txt add the message file names
+		4. on CMakeLists.txt add any dependency of message files if it exists
+
+		?? rosbuild_genmsg()  http://wiki.ros.org/Messages   DO WE HAVE TO DO ALL THE ABOVE STEPS ON CMAKE??
+		+++++++++++++++++++++++
+
+
+		C) message header :
+		  A message may include a special message type called 'Header', which includes some common metadata fields such as a timestamp and a frame ID. 
+		  The ROS Client Libraries will automatically set some of these fields for you if you wish, so their use is highly encouraged.
+
+		 There are three fields in the header message shown below. The seq field corresponds to an id that automatically increases as messages are sent 
+		 from a given publisher.The stamp field stores time information that should be associated with data in a message. 
+		 In the case of a laser scan, for example, the stamp might correspond to the time at which the scan was taken. 
+		 The frame_id field stores frame information that should be associated with data in a message. In the case of a laser scan, 
+		 this would be set to the frame in which the scan was taken.
+
+		D) rosmsg
+		  rosmsg is a command-line tool for displaying information about messages, such as displaying the .msg data structures
+
+
+5) Messages goes through TOPICS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	Topics are named buses over which nodes exchange messages. Topics have anonymous publish/subscribe semantics, which decouples the production of 
+	information from its consumption.In general, nodes are not aware of who they are communicating with. Instead, nodes that are interested in data 
+	subscribe to the relevant topic;nodes that generate data publish to the relevant topic. There can be multiple publishers and subscribers to a topic.
+
+	Each topic is strongly typed by the ROS message type used to publish to it and nodes can only receive messages with a matching type
+
+	A) rostopic is a command-line tool for interacting with ROS topic
+
+		rostopic list			 # will list the current topics
+		rostopic echo /topic_name        # will display Messages published to /topic_name.
+		rostopic hz /topic_name  	 # will give info on publish frequency		
+	
+	B) rostopic   type returns the message type of any topic being published.
+		eg : rostopic type /turtle1/cmd_vel
+		We can look at the details of the message using rosmsg:
+		
+	++++++++++++++++++++++++++++++++++++++++++++CRUDE ANALOGY++++++++++++++++++++++++++++++++++++++++++++++++++++
+	Think of ros topic as as stream of messages.
+	so to see the mesage stream you do --> rostopic echo /the_topic_name
+	then to seee actual measage format you do ---> rosmsg 
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	C) PUBLISH A topic manually
+	  rostopic pub [topic] [msg_type] [args]
+
+5) ROSRUN
+	rosrun allows you to use the package name to directly run a node within a package (without having to know the package path).
+	rosrun [package_name] [node_name]
+	eg : rosrun turtlesim turtlesim_node
+
+6) SERVICES
+
+	Services are another way that nodes can communicate with each other. Services allow nodes to send a request and receive a response.
+		
+	rosservice list         print information about active services
+	rosservice call         call the service with the provided args
+	rosservice type         print service type -----(like how  on messages use---> rossrv to know the file( rosmsg show )
+	rosservice find         find services by service type
+	rosservice uri          print service ROSRPC uri
+
+7) PARAMETER SERVER
+		
+	rosparam allows you to store and manipulate data on the ROS Parameter Server. The Parameter Server can store integers, 
+	floats, boolean, dictionaries, and lists. rosparam uses the YAML markup language for syntax. In simple cases, 
+	YAML looks very natural: 1 is an integer, 1.0 is a float, one is a string, true is a boolean, [1, 2, 3] is a list of integers, 
+	and {a: b, c: d} is a dictionary.
+
+	rosparam set            set parameter
+	rosparam get            get parameter
+	rosparam load           load parameters from file
+	rosparam dump           dump parameters to file
+	rosparam delete         delete parameter
+	rosparam list           list parameter names
+
+
+
+		
+
+
+
+	
+
+
+
