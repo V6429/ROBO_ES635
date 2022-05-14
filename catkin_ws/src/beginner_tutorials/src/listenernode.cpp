@@ -10,7 +10,7 @@ int main(int argc,char **argv){
 
     init(argc,argv,"NODENAME_listener");
     NodeHandle sub_nh;
-    Subscriber listener_subscriber =sub_nh.subscribe("TOPICNAME_pewpew",1000,listencallbackfunction);
+    Subscriber listener_subscriber =sub_nh.subscribe("TOPICNAME_pewpew",1000,listencallbackfunction); //!!! msg is also passed to call back function by ros
 
     spin();// ros::spin() will not return after the call, that is, your main program will not execute down here
     ROS_INFO("below code");
