@@ -17,8 +17,8 @@ int main(int argc, char **argv){
   transformStamped.transform.translation.z = 0.0;
   tf2::Quaternion q;
   q.setRPY(0, 0, 0);
-  transformStamped.transform.translation.x = 2.0*sin(ros::Time::now().toSec());
-  transformStamped.transform.translation.y = 2.0*cos(ros::Time::now().toSec());
+  // transformStamped.transform.translation.x = 2.0*sin(ros::Time::now().toSec());
+  // transformStamped.transform.translation.y = 2.0*cos(ros::Time::now().toSec());
 
   transformStamped.transform.rotation.x = q.x();
   transformStamped.transform.rotation.y = q.y();
