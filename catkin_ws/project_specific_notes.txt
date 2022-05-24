@@ -1,0 +1,48 @@
+https://github.com/robopeak/rplidar_ros/wiki
+https://stackoverflow.com/questions/69786218/ros-tf-with-rplidar
+
+https://answers.ros.org/question/11232/how-to-turn-laser-scan-to-point-cloud-map/
+
+
+ros_base
+https://answers.ros.org/question/44639/how-to-broadcast-a-transform-between-map-and-odom/
+
+
+
+rosrun  tf2_ros  static_transform_publisher 2 2 0 0 1.57 0   base_link  laser
+rosrun  tf2_ros  static_transform_publisher 5 5 0   0 0 0   map  odom
+roslaunch rplidar_ros rplidar.launch
+rosrun  bot_pkg odometry_pub_node 
+
+
+rosrun  tf2_ros  static_transform_publisher 2 2 0 0 0 0 base_link  laser
+rosrun  tf2_ros  static_transform_publisher 5 5   0   0 0 0   map  odom
+
+
+
+On the robot device open the .bashrc file, then find lines:
+
+bot=192.168.1.1
+lap=192.168.1.2
+
+
+export ROS_MASTER_URI=http://master:11311
+export ROS_IPV6=on
+and replace them with:
+
+export ROS_MASTER_URI=http://192.168.1.1:11311
+export ROS_IP=192.168.1.1
+
+
+2nd device
+On the laptop device open the .bashrc file, then find lines:
+
+export ROS_MASTER_URI=http://master:11311
+export ROS_IPV6=on
+and replace them with:
+
+export ROS_MASTER_URI=http://192.168.1.1:11311
+export ROS_IP=192.168.1.2
+
+
+export ROS_MASTER_URI=http://pibot:11311
