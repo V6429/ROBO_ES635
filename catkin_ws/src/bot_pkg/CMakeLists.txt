@@ -166,19 +166,20 @@ target_link_libraries(${PROJECT_NAME}_odompublisher_tf ${catkin_LIBRARIES})
 #############
 
 # all install targets should us rosrun  tf2_ros  static_transform_publisher 2 2 0 0 1.57 0   map  laser
-ou can choose the destination
+
 # catkin_install_python(PROGRAMS
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+catkin_install_python( PROGRAMS scripts/diff_tf.py scripts/twist_to_motors.py scripts/wheel_loopback.py scripts/pid_velocity.py scripts/virtual_joystick.py scripts/wheel_scaler.py scripts/serialreader.py
+DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION} )
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
 # install(TARGETS ${PROJECT_NAME}_node
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
-rosrun  tf2_ros  static_transform_publisher 2 2 0 0 1.57 0   map  laser
-os.org/melodic/api/catkin/html/howto/format1/building_libraries.html
+
 # install(TARGETS ${PROJECT_NAME}
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

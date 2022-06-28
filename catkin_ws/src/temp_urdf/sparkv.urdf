@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<robot name="multipleshapes">
+
+
+<!-- colors  -->
+  <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+
+  <material name="black">
+    <color rgba="0.1 0.1 0.1 1"/>
+  </material>
+
+  <material name="green">
+    <color rgba="0 1 0 1"/>
+  </material>
+
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+
+
+  <material name="gray">
+    <color rgba="0.5 0.5 0.5 0.6"/>
+  </material>
+
+  
+<!-- end of colors  -->
+
+
+
+
+
+<!-- parts of bot -->
+
+ <!-- I HAVE USED POS AND ORIENTATION ON THE JOINTS -vivek   -->
+
+
+
+  <!-- the wheels and base -->
+  <link name="l_wheel">
+    <visual>
+    <material name="red"/>
+      <geometry>
+        <cylinder length="0.008" radius="0.038"/>
+      </geometry>
+    </visual>
+  </link>
+
+
+  <link name="r_wheel">
+    <visual>
+    <material name="red"/>
+      <geometry>
+        <cylinder length="0.008" radius="0.038"/>
+      </geometry>
+    </visual>
+  </link>
+
+
+
+  <link name="base_link">
+    <visual>
+    <material name="green"/>
+      <geometry>
+        <cylinder length="0.01" radius="0.05"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!--how the wheels and base are connected-->
+
+    <joint name="base_to_r_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="r_wheel"/>
+    <origin xyz="0.05 0 0.01" rpy="0 -1.57075 0"/>
+    <axis xyz="0 0 1"/>
+    </joint>
+
+
+    <joint name="base_to_l_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="l_wheel"/>
+    <origin xyz="-0.05 0 0.01" rpy="0 1.57075 0"/>
+    <axis xyz="0 0 1"/>
+    </joint>
+
+
+ 
+  </robot>
