@@ -50,7 +50,6 @@ diff_controller.py - controller for a differential drive
   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-
 import rospy
 import roslib
 roslib.load_manifest('bot_pkg')

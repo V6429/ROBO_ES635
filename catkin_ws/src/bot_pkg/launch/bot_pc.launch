@@ -1,0 +1,50 @@
+<launch>
+
+
+<!-- <param name="publish_frequency" type="double" value="10.0" /> -->
+
+
+
+    <node pkg="gmapping" name="ROS_GMAPPING_NODE" type="slam_gmapping"/>
+    <node pkg="rqt_gui" name="ROSGUI_TOOL" type="rqt_gui"/>
+    <!-- <node pkg="rviz" name="rviz" type="rviz"/> -->
+
+    <!-- <param name="SPARKV" textfile="$(find bot_pkg)/urdf/sparkv.urdf"/> -->
+    <param name="SPARKV" textfile="$(find bot_pkg)/urdf/sparkv.urdf"/>
+    <param name="bot" textfile="$(find bot_pkg)/urdf/bot.urdf"/>
+
+
+    <!-- <param name="BOT" textfile="$(find mypackage)/urdf/robotmodel.xml"/>  TO BE MADE -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" >
+        <remap from="robot_description" to="bot" />
+    </node>
+
+
+    <node pkg="rviz" name="RVIZ_GUI" type="rviz">
+        <remap from="robot_description" to="bot" />
+    </node>
+
+
+    <!-- <node pkg="rqt_graph" name="graph" type="rqt_graph"/> -->
+    <!-- <node pkg="bot_pkg" name="FAKE_ODOMETRY_FOR___TESTING" type="odometry_pub_node"/> -->    
+    <!-- roslaunch urdf_tutorial display.launch model:=urdf/01-myfirst.urdf -->
+
+
+    <node pkg="teleop_twist_keyboard" name="teleop" type="teleop_twist_keyboard.py" output="screen" >
+    </node>
+
+
+    <rosparam param="ticks_meter">4372</rosparam>
+    <rosparam param="out_min">-255</rosparam>
+    <rosparam param="out_max">255</rosparam>
+    
+    <node  pkg="bot_pkg" type="twist_to_motors.py" name="motor_commander" output="screen" > 
+    <remap from="/twist" to="/cmd_vel" />
+    </node>
+    <node  pkg="bot_pkg" type="diff_tf.py" name="ODOM_TF_PUBLISHER" output="screen" />
+
+
+    <!-- THIS IS THE COREECT ONE -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_Lidar" args="0.14 0 0.03 0 0 0  base_link  laser  "/>
+
+</launch>

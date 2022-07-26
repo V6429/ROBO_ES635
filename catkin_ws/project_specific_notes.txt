@@ -20,12 +20,14 @@ rosrun  bot_pkg odometry_pub_node
 
 
 On the robot device open the .bashrc file, then find lines:
-
 bot=192.168.1.1
 lap=192.168.1.2
+
 export ROS_MASTER_URI=http://master:11311
 export ROS_IPV6=on
 and replace them with:
+
+
 
 2nd device
 On the laptop device open the .bashrc file, then find lines:
@@ -34,7 +36,11 @@ export ROS_IPV6=on
 and replace them with:
 export ROS_MASTER_URI=http://192.168.1.1:11311
 export ROS_IP=192.168.1.2
-export ROS_MASTER_URI=http://pibot:11311
+
+
+export ROS_MASTER_URI=http://pibot.local:11311
 
 
 roslaunch urdf_tutorial display.launch model:=urdf/01-myfirst.urdf
+
+rostopic pub /rwheel/motor_cmd std_msgs/Float32 "data: 132" -r  100

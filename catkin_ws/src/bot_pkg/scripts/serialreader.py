@@ -5,9 +5,12 @@ from std_msgs.msg import Int16
 from std_msgs.msg import Float32
 import serial
 import sys
+from threading import Semaphore
+
+sem=Semaphore(1)
 
 ser = serial.Serial(port=rospy.get_param('devtty', '/dev/ttyUSB0'),
-                    baudrate = 9600,
+                    baudrate=9600,
                     parity=serial.PARITY_NONE,
                     stopbits=serial.STOPBITS_ONE,
                     bytesize=serial.EIGHTBITS,
@@ -22,7 +25,9 @@ def valuetobytes(value):
 
 def callback(speed):
     rospy.loginfo("Writing speed:" + ( str(speed.data)+ " "))
+    sem.acquire()
     ser.write(valuetobytes(str(speed.data)+ " "))
+    sem.release()
 
 
 def pub_motorodoms():
@@ -66,10 +71,14 @@ def pub_motorodoms():
     while not rospy.is_shutdown():
         # get encoder count
         try:
+            sem.acquire()
             ser.write(valuetobytes(b'e'))
-            encodercount=int(ser.readline().decode('utf-8'))
+            x=ser.readline().decode('utf-8')
+            sem.release()
+            encodercount=int(x)
         except:
-            rospy.loginfo("FAILED TO GET SERIAL encoder" +str(rospy.get_name()))
+            rospy.loginfo("FAILED TO GET SERIAL encoder" +str(rospy.get_name()) + "GOT: "+str(x))
+
         # rospy.loginfo(hello_str)
         pub.publish(encodercount)
         rate.sleep()

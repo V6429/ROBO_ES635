@@ -1,0 +1,66 @@
+<launch>
+
+<!-- <param name="publish_frequency" type="double" value="10.0" /> -->
+
+    <!-- TEST AND CORRECT THIS-->
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="Lidar" args="2 2 0 0 1.57 0  base_link  laser  10"/> -->
+
+<!-- (100(2 pi x 5.1 ))*1401 -->
+
+    <rosparam param="ticks_meter">4372</rosparam>
+    <rosparam param="out_min">-255</rosparam>
+    <rosparam param="out_max">255</rosparam>
+   
+    <group ns="lwheel">
+    <rosparam param="base_width">0.175</rosparam>
+        <node  pkg="bot_pkg" type="pid_velocity.py" name="lwheel_pid" output="screen" >
+            <remap from="/lwheel/wheel" to="/lwheel"/>
+            <remap from="/lwheel/wheel_vtarget" to="/lwheel_vtarget"/>
+            <rosparam param="Kp">200</rosparam>
+            <rosparam param="Ki">200</rosparam>
+            <rosparam param="Kd">0</rosparam>
+            <rosparam param="out_min">-255</rosparam>
+            <rosparam param="out_max">255</rosparam>
+            <rosparam param="rate">30</rosparam>
+            <rosparam param="timeout_ticks">15</rosparam>
+            <rosparam param="out_min">-255</rosparam>
+            <rosparam param="out_max">255</rosparam>
+            <rosparam param="rolling_pts">5</rosparam>
+        </node>
+        
+        <param name="devtty" type="string" value="/dev/ttyUSB1" />
+        <node  pkg="bot_pkg" type="serialreader.py" name="lwheel_coms" output="screen" >
+            <remap from="/lwheel/xwheel" to="/lwheel"/>
+        <!-- <remap from="/lwheel/motor_cmd" to="/lmotor"/> -->
+        </node>
+    </group>
+
+    
+
+    <group ns="rwheel">
+        <node  pkg="bot_pkg" type="pid_velocity.py" name="lwheel_pid" output="screen" >
+            <remap from="/rwheel/wheel" to="/rwheel"/>
+            <remap from="/rwheel/wheel_vtarget" to="/rwheel_vtarget"/>
+            <remap from="/lwheel/wheel" to="/lwheel"/>
+            <remap from="/lwheel/wheel_vtarget" to="/lwheel_vtarget"/>
+            <rosparam param="Kp">200</rosparam>
+            <rosparam param="Ki">200</rosparam>
+            <rosparam param="Kd">0</rosparam>
+            <rosparam param="out_min">-255</rosparam>
+            <rosparam param="out_max">255</rosparam>
+            <rosparam param="rate">30</rosparam>
+            <rosparam param="timeout_ticks">15</rosparam>
+            <rosparam param="rolling_pts">5</rosparam>
+            <rosparam param="out_min">-255</rosparam>
+            <rosparam param="out_max">255</rosparam>
+        </node>
+
+        <param name="devtty" type="string" value="/dev/ttyUSB0" />
+        <node  pkg="bot_pkg" type="serialreader.py" name="rwheel_coms" output="screen" >
+            <remap from="/rwheel/xwheel" to="/rwheel"/>
+        </node>
+
+    </group>
+
+
+</launch>

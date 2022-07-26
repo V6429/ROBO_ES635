@@ -1,25 +1,16 @@
 <launch>
 
-
 <!-- <param name="publish_frequency" type="double" value="10.0" /> -->
-
-
 
     <!-- TEST AND CORRECT THIS-->
     <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="Lidar" args="2 2 0 0 1.57 0  base_link  laser  10"/> -->
-
-    <node  pkg="bot_pkg" type="twist_to_motors.py" name="motor_commander" output="screen" />
-    <node  pkg="bot_pkg" type="diff_tf.py" name="ODOM_TF_PUBLISHER" output="screen" />
-
 
     <group ns="lwheel">
     <node  pkg="bot_pkg" type="pid_velocity.py" name="lwheel_pid" output="screen" >
     <remap from="/lwheel/wheel" to="/lwheel"/>
     <remap from="/lwheel/wheel_vtarget" to="/lwheel_vtarget"/>
-    <!-- <remap from="/lwheel/motor_cmd" to="/lmotor"/> -->
     </node>
-
-    <param name="devtty" type="string" value="/dev/ttyUSB0" />
+    <param name="devtty" type="string" value="/dev/ttyUSB2" />
     <node  pkg="bot_pkg" type="serialreader.py" name="lwheel_coms" output="screen" >
     <remap from="/lwheel/xwheel" to="/lwheel"/>
     <!-- <remap from="/lwheel/motor_cmd" to="/lmotor"/> -->
@@ -31,30 +22,17 @@
     <node  pkg="bot_pkg" type="pid_velocity.py" name="lwheel_pid" output="screen" >
     <remap from="/rwheel/wheel" to="/rwheel"/>
     <remap from="/rwheel/wheel_vtarget" to="/rwheel_vtarget"/>
-    <!-- <remap from="/rwheel/motor_cmd" to="/rmotor"/> -->
     </node>
     <param name="devtty" type="string" value="/dev/ttyUSB1" />
     <node  pkg="bot_pkg" type="serialreader.py" name="rwheel_coms" output="screen" >
     <remap from="/rwheel/xwheel" to="/rwheel"/>
-    <!-- <remap from="/rwheel/motor_cmd" to="/rmotor"/> -->
     </node>
+
     </group>
 
-    <node pkg="gmapping" name="ROS_GMAPPING_NODE" type="slam_gmapping"/>
-    <node pkg="rqt_gui" name="ROSGUI_TOOL" type="rqt_gui"/>
+ 
     <!-- <node pkg="rviz" name="rviz" type="rviz"/> -->
-
-    <param name="SPARKV" textfile="$(find bot_pkg)/urdf/sparkv.urdf"/>
-    <!-- <param name="BOT" textfile="$(find mypackage)/urdf/robotmodel.xml"/>  TO BE MADE -->
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" >
-    <remap from="robot_description" to="SPARKV" />
-    </node>
-
-
     <!-- <node pkg="rqt_graph" name="graph" type="rqt_graph"/> -->
-
-
-
     <!-- <node pkg="bot_pkg" name="FAKE_ODOMETRY_FOR___TESTING" type="odometry_pub_node"/> -->    
     <!-- roslaunch urdf_tutorial display.launch model:=urdf/01-myfirst.urdf -->
 

@@ -75,7 +75,7 @@
 
   <!--how the wheels and base are connected-->
 
-    <joint name="base_to_r_wheel" type="static">
+    <joint name="base_to_r_wheel" type="continuous">
     <parent link="base_link"/>
     <child link="r_wheel"/>
     <origin xyz="0.05 0 0.01" rpy="0 -1.57075 0"/>
@@ -83,7 +83,7 @@
     </joint>
 
 
-    <joint name="base_to_l_wheel" type="static">
+    <joint name="base_to_l_wheel" type="continuous">
     <parent link="base_link"/>
     <child link="l_wheel"/>
     <origin xyz="-0.05 0 0.01" rpy="0 1.57075 0"/>
